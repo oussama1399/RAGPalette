@@ -1,0 +1,11 @@
+[project]
+name = "ragpalette"
+version = "0.1.0"
+requires-python = ">=3.10"
+
+[build-system]
+requires = ["uv_build>=0.12.19,<0.13"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
