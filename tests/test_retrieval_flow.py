@@ -1,8 +1,10 @@
 from ragpalette.chunking.fixed import FixedSizeChunker
 from ragpalette.core.models import Document
+from ragpalette.generation.generator import LLMGenerator
 from ragpalette.ingestion.indexer import Indexer
 from ragpalette.retrieval.dense import DenseRetriever
 from ragpalette.stores.memory import InMemoryVectorStore
+from ragpalette.strategies.classic.strategy import ClassicRAG
 
 
 class FakeEmbedder:
@@ -72,3 +74,26 @@ def test_complete_retrieval_flow() -> None:
     assert len(results) == 3
     assert results[0].chunk.document_id == "password-doc"
     assert results[0].score == 1.0
+
+    query = "How can I recover my forgotten password?"
+    expected_answer = "Use the password recovery page."
+    prompts: list[str] = []
+
+    def fake_llm(prompt: str) -> str:
+        prompts.append(prompt)
+        return expected_answer
+
+    strategy = ClassicRAG(
+        retriever=retriever,
+        generator=LLMGenerator(fake_llm),
+        top_k=1,
+    )
+    result = strategy.run(query)
+
+    assert result.answer == expected_answer
+    assert result.context == results[:1]
+    assert len(prompts) == 1
+    assert f"Question: {query}" in prompts[0]
+    assert "Source 1: password-doc\n" + documents[0].text in prompts[0]
+    assert documents[1].text not in prompts[0]
+    assert documents[2].text not in prompts[0]

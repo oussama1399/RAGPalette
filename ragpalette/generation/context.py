@@ -11,15 +11,7 @@ class ContextBuilder:
         formatted_sources: list[str] = []
 
         for position, result in enumerate(results, start=1):
-            # TODO 1:
-            # Format one source using:
-            # - position
-            # - result.source
-            # - result.chunk.text
             formatted_source = f"Source {position}: {result.source}\n{result.chunk.text}"
-
-            # TODO 2:
-            # Add the formatted source to formatted_sources.
             formatted_sources.append(formatted_source)
 
         # TODO 3:
