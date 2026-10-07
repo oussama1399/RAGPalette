@@ -57,6 +57,14 @@ class Retriever(Protocol):
         ...
         
     
+class Reranker(Protocol):
+    def rerank(
+        self, query: str, results: list[SearchResult]
+    ) -> list[SearchResult]:
+        """Return results ordered from most to least relevant to the query."""
+        ...
+
+
 class Generator(Protocol):
     
     def generate(self, query: str, context: list[SearchResult]) -> str:
